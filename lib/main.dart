@@ -98,6 +98,8 @@ class _MyAppState extends State<MyApp> {
   final _volunteerForm = GlobalKey<FormState>();
 
   Widget VolunteerForm() {
+    const List<String> list = <String>['1 Séance (130 minutes)', '2 Séances (260 minutes)', '3 Séances (390 minutes)', 'Illimité'];
+    String timerValue = list.first;
     return Form(
         key: _volunteerForm,
         child: Column(
@@ -120,21 +122,47 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
             Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+              child: DropdownMenu<String>(
+                initialSelection: list.first,
+                label: const Text('Nombre de Séance'),
+                onSelected: (String? value) {
+                  // This is called when the user selects an item.
+                  setState(() {
+                    timerValue = value!;
+                  });
+                },
+                dropdownMenuEntries: list.map<DropdownMenuEntry<String>>((String value) {
+                  return DropdownMenuEntry<String>(value: value, label: value);
+                }).toList(),
+              ),
+            ),
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: OutlinedButton(
                 onPressed: () {
+                  String time = "0";
+                  if (timerValue == "1 Séance ( 1h40 )")
+                    time = "6000000";
+                  else if (timerValue == "2 Séances ( 3h10 )")
+                    time = "11400000";
+                  else if (timerValue == "3 Séances ( 4h40 )")
+                    time = "16800000";
+                  else if (timerValue == "Illimité")
+                    time = "0";
+
                   if (_volunteerForm.currentState!.validate()) {
                     setState(() {
                       _load = true;
                     });
-                    recApi(_volunteer.text).then((value) {
+                    recApi(_volunteer.text, time).then((value) {
                       setState(() {
                         _load = false;
                       });
                       setState(() {
                         _index = 0;
                       });
-                    }).catchError((onError){
+                    }).catchError((onError) {
                       setState(() {
                         _index = 3;
                       });
@@ -241,7 +269,7 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-Future<Rec> recApi(String name) async {
+Future<Rec> recApi(String name, String time) async {
   final response = await http.post(
     Uri.parse('http://sc-api.coday.fr/rec'),
     headers: <String, String>{
@@ -249,6 +277,7 @@ Future<Rec> recApi(String name) async {
     },
     body: jsonEncode(<String, String>{
       'name': name,
+      'time': time,
     }),
   );
   var t = response.body;
