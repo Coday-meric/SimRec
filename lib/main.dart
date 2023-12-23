@@ -96,10 +96,10 @@ class _MyAppState extends State<MyApp> {
 
   final _volunteer = TextEditingController();
   final _volunteerForm = GlobalKey<FormState>();
+  late String timerValue;
 
   Widget VolunteerForm() {
-    const List<String> list = <String>['1 Séance (130 minutes)', '2 Séances (260 minutes)', '3 Séances (390 minutes)', 'Illimité'];
-    String timerValue = list.first;
+    const List<String> list = <String>['1 Séance ( 1h40 )', '2 Séances ( 3h10 )', '3 Séances ( 4h40 )', 'Illimité'];
     return Form(
         key: _volunteerForm,
         child: Column(
@@ -110,7 +110,7 @@ class _MyAppState extends State<MyApp> {
               child: TextFormField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: 'Nom du Bénévole',
+                  label: Text('Nom du/des Bénévole(s)'),
                 ),
                 controller: _volunteer,
                 validator: (value) {
@@ -130,6 +130,7 @@ class _MyAppState extends State<MyApp> {
                   // This is called when the user selects an item.
                   setState(() {
                     timerValue = value!;
+                    debugPrint(timerValue);
                   });
                 },
                 dropdownMenuEntries: list.map<DropdownMenuEntry<String>>((String value) {
@@ -142,16 +143,16 @@ class _MyAppState extends State<MyApp> {
               child: OutlinedButton(
                 onPressed: () {
                   String time = "0";
-                  if (timerValue == "1 Séance ( 1h40 )")
-                    time = "6000000";
-                  else if (timerValue == "2 Séances ( 3h10 )")
-                    time = "11400000";
-                  else if (timerValue == "3 Séances ( 4h40 )")
-                    time = "16800000";
-                  else if (timerValue == "Illimité")
-                    time = "0";
-
                   if (_volunteerForm.currentState!.validate()) {
+                    debugPrint(timerValue);
+                    if (timerValue == "1 Séance ( 1h40 )")
+                      time = "6000000";
+                    else if (timerValue == "2 Séances ( 3h10 )")
+                      time = "11400000";
+                    else if (timerValue == "3 Séances ( 4h40 )")
+                      time = "16800000";
+                    else if (timerValue == "Illimité")
+                      time = "0";
                     setState(() {
                       _load = true;
                     });
