@@ -96,10 +96,11 @@ class _MyAppState extends State<MyApp> {
 
   final _volunteer = TextEditingController();
   final _volunteerForm = GlobalKey<FormState>();
-  late String timerValue;
 
   Widget VolunteerForm() {
     const List<String> list = <String>['1 Séance ( 1h40 )', '2 Séances ( 3h10 )', '3 Séances ( 4h40 )', 'Illimité'];
+    String timerValue;
+    timerValue = list.first;
     return Form(
         key: _volunteerForm,
         child: Column(
@@ -142,8 +143,9 @@ class _MyAppState extends State<MyApp> {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: OutlinedButton(
                 onPressed: () {
-                  String time = "0";
+
                   if (_volunteerForm.currentState!.validate()) {
+                    String time = "0";
                     debugPrint(timerValue);
                     if (timerValue == "1 Séance ( 1h40 )")
                       time = "6000000";
